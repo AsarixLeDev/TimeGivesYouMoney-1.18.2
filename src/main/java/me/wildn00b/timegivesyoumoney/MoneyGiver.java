@@ -22,41 +22,41 @@ import java.util.Map.Entry;
 
 public class MoneyGiver implements Runnable {
 
-  private final TimeGivesYouMoney tgym;
+    private final TimeGivesYouMoney tgym;
 
-  public MoneyGiver(TimeGivesYouMoney tgym) {
-    this.tgym = tgym;
-  }
-
-  @Override
-  public void run() {
-    for (final Entry<String, Long> player : tgym.afkTimer.entrySet()) {
-      if (tgym.getServer().getPlayer(player.getKey()) == null)
-        continue;
-
-      final String group = tgym.Vault.GetGroup(tgym.getServer().getPlayer(
-          player.getKey()));
-
-      Object val = tgym.Settings._("Group." + group + ".AFKTimeout",
-          (double) -1);
-
-      double timeout = -1;
-      if (val instanceof Integer)
-        timeout = ((Integer) val).doubleValue();
-      else
-        timeout = (Double) val;
-
-      val = tgym.Settings._("Group." + group + ".MoneyPerMinute", (double) -1);
-
-      double money = -1;
-      if (val instanceof Integer)
-        money = ((Integer) val).doubleValue();
-      else
-        money = (Double) val;
-
-      if ((timeout != -1 || player.getValue() - System.currentTimeMillis() > timeout * 1000 * 60))
-        tgym.Bank.Add(player.getKey(), money, false);
+    public MoneyGiver(TimeGivesYouMoney tgym) {
+        this.tgym = tgym;
     }
-  }
+
+    @Override
+    public void run() {
+        for (final Entry<String, Long> player : tgym.afkTimer.entrySet()) {
+            if (tgym.getServer().getPlayer(player.getKey()) == null)
+                continue;
+
+            final String group = tgym.Vault.GetGroup(tgym.getServer().getPlayer(
+                    player.getKey()));
+
+            Object val = tgym.Settings.get("Group." + group + ".AFKTimeout",
+                    (double) -1);
+
+            double timeout;
+            if (val instanceof Integer)
+                timeout = ((Integer) val).doubleValue();
+            else
+                timeout = (Double) val;
+
+            val = tgym.Settings.get("Group." + group + ".MoneyPerMinute", (double) -1);
+
+            double money;
+            if (val instanceof Integer)
+                money = ((Integer) val).doubleValue();
+            else
+                money = (Double) val;
+
+            if ((timeout != -1 || player.getValue() - System.currentTimeMillis() > timeout * 1000 * 60))
+                tgym.Bank.Add(player.getKey(), money, false);
+        }
+    }
 
 }

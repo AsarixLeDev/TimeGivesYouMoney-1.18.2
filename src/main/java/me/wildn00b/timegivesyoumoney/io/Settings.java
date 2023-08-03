@@ -18,81 +18,73 @@
  */
 package me.wildn00b.timegivesyoumoney.io;
 
+import me.wildn00b.timegivesyoumoney.TimeGivesYouMoney;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import me.wildn00b.timegivesyoumoney.TimeGivesYouMoney;
-
-import org.bukkit.configuration.file.YamlConfiguration;
-
 public class Settings {
 
-  private final YamlConfiguration file;
-  private File path;
-  private final TimeGivesYouMoney tgym;
+    private final YamlConfiguration file;
 
-  public Settings(TimeGivesYouMoney tgym) {
-    this.tgym = tgym;
-    file = new YamlConfiguration();
+    public Settings(TimeGivesYouMoney tgym) {
+        file = new YamlConfiguration();
 
-    try {
-      path = new File(tgym.getDataFolder().getAbsolutePath() + File.separator
-          + "config.yml");
-      if (path.exists())
-        file.load(path);
+        try {
+            File path = new File(tgym.getDataFolder().getAbsolutePath() + File.separator
+                    + "config.yml");
+            if (path.exists())
+                file.load(path);
 
-      addDefaults();
-      file.save(path);
-    } catch (final Exception e) {
-      e.printStackTrace();
+            addDefaults();
+            file.save(path);
+        } catch (final Exception e) {
+            e.printStackTrace();
+        }
     }
-  }
 
-  public Object _(String path, Object value) {
-    if (!file.contains(path))
-      file.set(path, value);
-    return file.get(path);
-  }
-
-  public ArrayList<String> GetAvailableGroups() {
-    final ArrayList<String> output = new ArrayList<String>();
-
-    for (final String group : file.getConfigurationSection("Group").getKeys(
-        false))
-      output.add(group);
-
-    return output;
-  }
-
-  public void Set(String path, Object value) {
-    file.set(path, value);
-    try {
-      file.save(path);
-    } catch (final IOException e) {
+    public Object get(String path, Object value) {
+        if (!file.contains(path))
+            file.set(path, value);
+        return file.get(path);
     }
-  }
 
-  private void addDefaults() {
-    final HashMap<String, Object> list = new HashMap<String, Object>();
+    public ArrayList<String> GetAvailableGroups() {
 
-    list.put("SettingsVersion", 2);
-    list.put("Language", "en-US");
+        return new ArrayList<>(file.getConfigurationSection("Group").getKeys(
+                false));
+    }
 
-    list.put("SaveProgressOnLogout", true);
-    list.put("SaveProgressOnShutdown", true);
+    public void Set(String path, Object value) {
+        file.set(path, value);
+        try {
+            file.save(path);
+        } catch (final IOException ignored) {
+        }
+    }
 
-    list.put("Group.Default.AFKTimeout", (double) 5);
-    list.put("Group.Default.MoneyPerMinute", (double) 2);
-    list.put("Group.Default.InstantPayout", false);
-    list.put("Group.Default.MaxMoneyEarnPerDay", (double) 20000);
-    list.put("Group.Default.MaxMoneyEarnPerSession", (double) 10000);
+    private void addDefaults() {
+        final HashMap<String, Object> list = new HashMap<>();
 
-    for (final Entry<String, Object> entry : list.entrySet())
-      if (!file.contains(entry.getKey()) || file.equals("SettingsVersion"))
-        file.set(entry.getKey(), entry.getValue());
+        list.put("SettingsVersion", 2);
+        list.put("Language", "en-US");
 
-  }
+        list.put("SaveProgressOnLogout", true);
+        list.put("SaveProgressOnShutdown", true);
+
+        list.put("Group.Default.AFKTimeout", (double) 5);
+        list.put("Group.Default.MoneyPerMinute", (double) 2);
+        list.put("Group.Default.InstantPayout", false);
+        list.put("Group.Default.MaxMoneyEarnPerDay", (double) 20000);
+        list.put("Group.Default.MaxMoneyEarnPerSession", (double) 10000);
+
+        for (final Entry<String, Object> entry : list.entrySet())
+            if (!file.contains(entry.getKey()) || file.equals("SettingsVersion"))
+                file.set(entry.getKey(), entry.getValue());
+
+    }
 }

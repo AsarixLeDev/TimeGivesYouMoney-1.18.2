@@ -2,15 +2,15 @@ package me.wildn00b.timegivesyoumoney;
 
 public class ClearDay implements Runnable {
 
-  TimeGivesYouMoney tgym;
+    TimeGivesYouMoney tgym;
 
-  public ClearDay(TimeGivesYouMoney tgym) {
-    this.tgym = tgym;
-  }
+    public ClearDay(TimeGivesYouMoney tgym) {
+        this.tgym = tgym;
+    }
 
-  @Override
-  public void run() {
-    tgym.Bank.ClearDay();
-  }
+    @Override
+    public void run() {
+        tgym.Bank.ClearDay();
+    }
 
 }

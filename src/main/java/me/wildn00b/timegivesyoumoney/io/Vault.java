@@ -18,65 +18,64 @@
  */
 package me.wildn00b.timegivesyoumoney.io;
 
-import java.util.ArrayList;
-import java.util.logging.Level;
-
 import me.wildn00b.timegivesyoumoney.TimeGivesYouMoney;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
-
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import java.util.ArrayList;
+import java.util.logging.Level;
+
 public class Vault {
 
-  private Economy economy;
-  private Permission permissions;
-  private TimeGivesYouMoney tgym;
+    private Economy economy;
+    private Permission permissions;
+    private final TimeGivesYouMoney tgym;
 
-  public Vault(TimeGivesYouMoney tgym) {
-    this.tgym = tgym;
-    if (tgym.getServer().getPluginManager().getPlugin("Vault") == null) {
-      tgym.Log.log(Level.SEVERE, "[PreKick] " + tgym.Lang._("Vault.NotFound"));
-      tgym.getServer().getPluginManager().disablePlugin(tgym);
-    } else {
-      final RegisteredServiceProvider<Permission> perm = tgym.getServer()
-          .getServicesManager().getRegistration(Permission.class);
-      if (perm == null) {
-        tgym.Log.log(Level.SEVERE,
-            "[TimeGivesYouMoney] " + tgym.Lang._("Vault.PermissionNotFound"));
-        tgym.getServer().getPluginManager().disablePlugin(tgym);
-        return;
-      }
-      permissions = perm.getProvider();
+    public Vault(TimeGivesYouMoney tgym) {
+        this.tgym = tgym;
+        if (tgym.getServer().getPluginManager().getPlugin("Vault") == null) {
+            tgym.Log.log(Level.SEVERE, "[PreKick] " + tgym.Lang.get("Vault.NotFound"));
+            tgym.getServer().getPluginManager().disablePlugin(tgym);
+        } else {
+            final RegisteredServiceProvider<Permission> perm = tgym.getServer()
+                    .getServicesManager().getRegistration(Permission.class);
+            if (perm == null) {
+                tgym.Log.log(Level.SEVERE,
+                        "[TimeGivesYouMoney] " + tgym.Lang.get("Vault.PermissionNotFound"));
+                tgym.getServer().getPluginManager().disablePlugin(tgym);
+                return;
+            }
+            permissions = perm.getProvider();
 
-      final RegisteredServiceProvider<Economy> econ = tgym.getServer()
-          .getServicesManager().getRegistration(Economy.class);
-      if (econ == null) {
-        tgym.Log.log(Level.SEVERE,
-            "[TimeGivesYouMoney] " + tgym.Lang._("Vault.EconomyNotFound"));
-        tgym.getServer().getPluginManager().disablePlugin(tgym);
-        return;
-      }
-      economy = econ.getProvider();
+            final RegisteredServiceProvider<Economy> econ = tgym.getServer()
+                    .getServicesManager().getRegistration(Economy.class);
+            if (econ == null) {
+                tgym.Log.log(Level.SEVERE,
+                        "[TimeGivesYouMoney] " + tgym.Lang.get("Vault.EconomyNotFound"));
+                tgym.getServer().getPluginManager().disablePlugin(tgym);
+                return;
+            }
+            economy = econ.getProvider();
+        }
     }
-  }
 
-  public Economy GetEconomy() {
-    return economy;
-  }
+    public Economy GetEconomy() {
+        return economy;
+    }
 
-  public String GetGroup(Player player) {
-    final ArrayList<String> groups = tgym.Settings.GetAvailableGroups();
-    for (final String group : groups)
-      if (!group.equalsIgnoreCase("default")
-          && HasPermissions(player, "tgym.group." + group))
-        return group;
-    return "Default";
-  }
+    public String GetGroup(Player player) {
+        final ArrayList<String> groups = tgym.Settings.GetAvailableGroups();
+        for (final String group : groups)
+            if (!group.equalsIgnoreCase("default")
+                    && HasPermissions(player, "tgym.group." + group))
+                return group;
+        return "Default";
+    }
 
-  public boolean HasPermissions(Player player, String permission) {
-    return permissions.has(player, permission);
-  }
+    public boolean HasPermissions(Player player, String permission) {
+        return permissions.has(player, permission);
+    }
 
 }
